@@ -20,7 +20,7 @@ public class BattleEngine {
         this.ui = ui;
     }
 
-    public void fight(Player player, Enemy enemy) {
+    public BattleOutcome fight(Player player, Enemy enemy) {
         BattleContext ctx = new BattleContext(player, enemy, ui);
 
         List<BattleAction> actions = List.of(
@@ -114,5 +114,6 @@ public class BattleEngine {
         } else {
             ui.println("You lost...");
         }
+        return outcome;
     }
 }

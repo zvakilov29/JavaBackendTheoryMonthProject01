@@ -2,15 +2,23 @@ package rpg.game;
 
 import rpg.battle.BattleEngine;
 import rpg.battle.BattleOutcome;
+import rpg.game.encounters.Encounter;
+import rpg.game.encounters.EncounterRoller;
+import rpg.game.encounters.MerchantEncounter;
+import rpg.game.encounters.ShrineEncounter;
 import rpg.model.Enemy;
 import rpg.model.Player;
 import rpg.ui.GameUI;
+
+import java.util.List;
 
 public class GameEngine {
 
     private final GameUI ui;
     private final BattleEngine battleEngine;
     private final EnemyFactory enemyFactory = new EnemyFactory();
+    private final EncounterRoller encounterRoller =
+            new EncounterRoller(List.of(new MerchantEncounter(), new ShrineEncounter()));
 
     public GameEngine(GameUI ui, BattleEngine battleEngine) {
         this.ui = ui;
@@ -35,7 +43,13 @@ public class GameEngine {
                 fightsWon++;
                 ui.println("Fights won: " + fightsWon);
 
-                // Later: roll an encounter here (merchant/chest/shrine)
+                Encounter enc = encounterRoller.roll();
+                if (enc != null) {
+                    ui.println("\nAn encounter begins: " + enc.name());
+                    enc.run(player, ui);
+                } else {
+                    ui.println("\nNo encounter this time. You move on...");
+                }
 
             } else if (outcome == BattleOutcome.ESCAPED) {
                 ui.println("You escaped. The run ends here (for now).");

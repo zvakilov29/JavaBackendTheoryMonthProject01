@@ -2,14 +2,18 @@ package rpg.ui;
 
 import rpg.model.enums.PlayerClass;
 
+import java.util.List;
 import java.util.Scanner;
 
 public class ConsoleUI implements GameUI {
     private final Scanner sc = new Scanner(System.in);
 
     @Override
-    public void println(String s) { System.out.println(s); }
+    public void println(String s) {
+        System.out.println(s);
+    }
 
+    @Override
     public String readNonBlank(String prompt) {
         println(prompt);
         while (true) {
@@ -20,29 +24,28 @@ public class ConsoleUI implements GameUI {
     }
 
     @Override
-    public int readIntInRange(String prompt, int min, int max) {
+    public int chooseOption(String prompt, List<String> options) {
         println(prompt);
+        for (int i = 0; i < options.size(); i++) {
+            println((i + 1) + ") " + options.get(i));
+        }
         while (true) {
             try {
                 int v = Integer.parseInt(sc.nextLine().trim());
-                if (v < min || v > max) throw new IllegalArgumentException();
-                return v;
+                if (v < 1 || v > options.size()) throw new IllegalArgumentException();
+                return v - 1; // 0-based index
             } catch (Exception e) {
-                println("Enter a number between " + min + " and " + max + ":");
+                println("Enter a number between 1 and " + options.size() + ":");
             }
         }
     }
 
+    // keeping this just in case
     public PlayerClass choosePlayerClass() {
-        println("Choose your class:");
-        println("1) WARRIOR");
-        println("2) MAGE");
-        println("3) ROGUE");
-        int choice = readIntInRange("Enter 1-3:", 1, 3);
-
-        return switch (choice) {
-            case 1 -> PlayerClass.WARRIOR;
-            case 2 -> PlayerClass.MAGE;
+        int idx = chooseOption("Choose your class:", List.of("WARRIOR", "MAGE", "ROGUE"));
+        return switch (idx) {
+            case 0 -> PlayerClass.WARRIOR;
+            case 1 -> PlayerClass.MAGE;
             default -> PlayerClass.ROGUE;
         };
     }

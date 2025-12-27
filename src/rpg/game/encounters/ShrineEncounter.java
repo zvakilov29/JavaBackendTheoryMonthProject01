@@ -3,7 +3,10 @@ package rpg.game.encounters;
 import rpg.model.Player;
 import rpg.ui.GameUI;
 
+import java.util.List;
+
 public class ShrineEncounter implements Encounter {
+
     @Override
     public String name() {
         return "Shrine";
@@ -14,18 +17,17 @@ public class ShrineEncounter implements Encounter {
         ui.println("\n=== SHRINE ===");
         ui.println("You find a mysterious shrine. Choose a blessing:");
 
-        ui.println("1) +10 Max HP");
-        ui.println("2) +2 Attack");
-        ui.println("3) +2 Defense");
-
-        int choice = ui.readIntInRange("Choose 1-3:", 1, 3);
+        int choice = ui.chooseOption(
+                "Choose one blessing:",
+                List.of("+10 Max HP", "+2 Attack", "+2 Defense")
+        );
 
         switch (choice) {
-            case 1 -> {
+            case 0 -> {
                 player.addMaxHpModifier(10);
                 ui.println("Blessing received: +10 Max HP!");
             }
-            case 2 -> {
+            case 1 -> {
                 player.addAttackModifier(2);
                 ui.println("Blessing received: +2 Attack!");
             }

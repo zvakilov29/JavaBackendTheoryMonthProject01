@@ -44,16 +44,12 @@ public class BattleEngine {
             // --------------------
             // Player turn
             // --------------------
-            ui.println("\nYour turn:");
-            for (int i = 0; i < actions.size(); i++) {
-                ui.println((i + 1) + ") " + actions.get(i).label());
-            }
+            List<String> labels = actions.stream()
+                    .map(BattleAction::label)
+                    .toList();
 
-            int choice = ui.readIntInRange("Choose 1-" + actions.size() + ":", 1, actions.size());
-            actions.get(choice - 1).execute(ctx);
-
-            // If RunAction succeeded (or any action ended battle), stop immediately
-            if (ctx.isEnded()) break;
+            int choice = ui.chooseOption("Your turn:", labels);
+            actions.get(choice).execute(ctx);
 
             // If enemy died due to the player's action, end as WIN
             if (enemy.isDefeated()) {

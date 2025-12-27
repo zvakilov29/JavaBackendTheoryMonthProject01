@@ -62,6 +62,10 @@ public abstract class Character implements Damageable {
         return !isDefeated();
     }
 
+    public int getMaxHpModifier() { return maxHpModifier; }
+    public int getAttackModifier() { return attackModifier; }
+    public int getDefenseModifier() { return defenseModifier; }
+
     // --------------------
     // Combat state changes
     // --------------------

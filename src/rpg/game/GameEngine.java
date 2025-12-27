@@ -8,8 +8,10 @@ import rpg.game.encounters.MerchantEncounter;
 import rpg.game.encounters.ShrineEncounter;
 import rpg.model.Enemy;
 import rpg.model.Player;
+import rpg.persistence.SaveManager;
 import rpg.ui.GameUI;
 
+import java.io.IOException;
 import java.util.List;
 
 public class GameEngine {
@@ -20,9 +22,12 @@ public class GameEngine {
     private final EncounterRoller encounterRoller =
             new EncounterRoller(List.of(new MerchantEncounter(), new ShrineEncounter()));
 
-    public GameEngine(GameUI ui, BattleEngine battleEngine) {
+    private final SaveManager saveManager;
+
+    public GameEngine(GameUI ui, BattleEngine battleEngine, SaveManager saveManager) {
         this.ui = ui;
         this.battleEngine = battleEngine;
+        this.saveManager = saveManager;
     }
 
     public void run(Player player, Difficulty difficulty) {
@@ -51,9 +56,13 @@ public class GameEngine {
                     ui.println("\nNo encounter this time. You move on...");
                 }
 
+                autoSave(player);
+
             } else if (outcome == BattleOutcome.ESCAPED) {
                 ui.println("You escaped. The run ends here (for now).");
+                autoSave(player); // optional but nice
                 break;
+
             } else {
                 ui.println("Game Over. Total fights won: " + fightsWon);
                 break;
@@ -62,8 +71,18 @@ public class GameEngine {
             // Optional stop condition for a “demo”
             if (fightsWon >= 5) {
                 ui.println("You cleared 5 fights! Demo complete.");
+                autoSave(player);
                 break;
             }
+        }
+    }
+
+    private void autoSave(Player player) {
+        try {
+            saveManager.save(player);
+            ui.println("(Auto-saved)");
+        } catch (IOException e) {
+            ui.println("WARNING: Failed to save game: " + e.getMessage());
         }
     }
 }

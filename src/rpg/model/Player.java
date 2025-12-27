@@ -97,4 +97,11 @@ public class Player extends Character {
     public void tickCooldowns() {
         if (skillCooldownRemaining > 0) skillCooldownRemaining--;
     }
+
+    public void restoreProgress(int level, int xp) {
+        if (level < 1) throw new IllegalArgumentException("level must be >= 1");
+        if (xp < 0) throw new IllegalArgumentException("xp must be >= 0");
+        this.level = level;
+        this.xp = xp;
+    }
 }
